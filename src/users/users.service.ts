@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -11,7 +12,7 @@ export class UsersService {
   ) {}
   private users = [];
 
-  async createUser(userData: any): Promise<any> {
+  async createUser(userData: CreateUserDto): Promise<CreateUserDto> {
     const newUser = { id: Date.now(), ...userData };
     this.users.push(newUser);
     await this.addSendEmailJobToQueue(newUser);
@@ -22,7 +23,7 @@ export class UsersService {
     return this.users.find((user) => user.id === userId);
   }
 
-  private async addSendEmailJobToQueue(user: any): Promise<void> {
+  private async addSendEmailJobToQueue(user: CreateUserDto): Promise<void> {
     await this.emailQueue.add(
       'send-welcome-email',
       {
@@ -30,21 +31,9 @@ export class UsersService {
         name: user.name,
       },
       {
-        delay: 2000,
+        delay: 11000,
         attempts: 1,
       },
     );
-  }
-
-  private async sendWelcomeEmail(user: any): Promise<void> {
-    await this.mailerService.sendMail({
-      to: user.email,
-      from: 'e-mail test <bull@bull.com>',
-      subject: 'Bem-vindo à Nossa Plataforma!',
-      template: 'welcome',
-      context: {
-        name: user.name,
-      },
-    });
   }
 }

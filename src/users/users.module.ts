@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bull';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullAdapter } from '@bull-board/api/bullAdapter';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
     }),
     BullBoardModule.forFeature({
       name: 'email-queue',
-      adapter: BullMQAdapter,
+      adapter: BullAdapter,
     }),
   ],
   providers: [UsersService],

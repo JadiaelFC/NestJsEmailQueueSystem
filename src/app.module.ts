@@ -21,6 +21,7 @@ import { ExpressAdapter } from '@bull-board/express';
         host: process.env.REDIS_HOST,
         port: +process.env.REDIS_PORT,
       },
+      prefix: 'bull_',
     }),
     MailerModule,
     UsersModule,

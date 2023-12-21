@@ -21,7 +21,7 @@ import { EmailConsumer } from './consumers/email.consumer';
           ignoreTLS: true,
         },
         defaults: {
-          from: '"No Reply" <no-reply@example.com>1',
+          from: '"No Reply" <no-reply@bull.com>',
         },
         template: {
           dir: join(__dirname, '..', 'mailer', 'templates'),
