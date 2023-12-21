@@ -5,9 +5,22 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule as NestMailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
+import { BullModule as BullMQModule } from '@nestjs/bullmq';
+import { BullBoardModule } from '@bull-board/nestjs';
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { QUEUE_NAME as BULLMQ_QUEUE_NAME } from '../bullMQ/bullMQ.constants';
+import { BullMQProcessor } from '../bullMQ/bullMQ.processor';
+import { BullMQEventsListener } from '../bullMQ/bullMQ.eventsListener';
 
 @Module({
   imports: [
+    BullMQModule.registerQueue({
+      name: BULLMQ_QUEUE_NAME,
+    }),
+    BullBoardModule.forFeature({
+      name: BULLMQ_QUEUE_NAME,
+      adapter: BullMQAdapter,
+    }),
     NestMailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -35,7 +48,7 @@ import { join } from 'path';
       inject: [ConfigService],
     }),
   ],
-  providers: [UsersService],
+  providers: [UsersService, BullMQProcessor, BullMQEventsListener],
   controllers: [UsersController],
 })
 export class UsersModule {}
